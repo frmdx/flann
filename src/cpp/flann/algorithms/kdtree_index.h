@@ -37,7 +37,7 @@
 #include <cstring>
 #include <stdarg.h>
 #include <cmath>
-
+#include <random>
 #include "flann/general.h"
 #include "flann/algorithms/nn_index.h"
 #include "flann/util/dynamic_bitset.h"
@@ -262,11 +262,14 @@ protected:
         var_ = new DistanceType[veclen_];
 
         tree_roots_.resize(trees_);
+        std::random_device rng;
+        std::mt19937 urng(rng());
         /* Construct the randomized trees. */
         for (int i = 0; i < trees_; i++) {
             /* Randomize the order of vectors to allow for unbiased sampling. */
-            std::random_shuffle(ind.begin(), ind.end());
-            tree_roots_[i] = divideTree(&ind[0], int(size_) );
+            //std::random_shuffle(ind.begin(), ind.end());
+                std::shuffle(ind.begin(), ind.end(),urng);
+                tree_roots_[i] = divideTree(&ind[0], int(size_) );
         }
         delete[] mean_;
         delete[] var_;
